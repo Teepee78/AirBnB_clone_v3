@@ -73,7 +73,6 @@ class FileStorage:
         """gets an object from the storage"""
         if cls is not None and id is not None:
             key = cls.__name__ + '.' + str(id)
-            print(key)
             if key in self.__objects:
                 return self.__objects[key]
         return None
@@ -83,7 +82,7 @@ class FileStorage:
         count = 0
         if cls is not None:
             for item in self.__objects:
-                if item.__class__ == cls:
+                if item.__class__ == cls.__name__:
                     count += 1
             return count
         else:
