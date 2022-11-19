@@ -92,7 +92,7 @@ class DBStorage:
         """Returns the number of objects in storage also with specified class if supplied"""
         count = 0
         if cls:
-            count += len(self.__session.query(classes[cls]).all())
+            count += len(self.__session.query(cls).all())
         else:
             for value in classes.values():
                 count += len(self.__session.query(value).all())
