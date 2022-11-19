@@ -82,14 +82,11 @@ class DBStorage:
                 cls.id == id
             ).first()
             return objs
-            # for obj in objs:
-                # if obj.id == id:
-                    # return (obj)
-            return None
         return None
 
     def count(self, cls=None):
-        """Returns the number of objects in storage also with specified class if supplied"""
+        """Returns the number of objects in storage
+        also with specified class if supplied"""
         count = 0
         if cls:
             count += len(self.__session.query(cls).all())
