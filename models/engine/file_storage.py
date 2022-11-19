@@ -82,7 +82,7 @@ class FileStorage:
         count = 0
         if cls is not None:
             for item in self.__objects:
-                print(item)
+                print(type(item))
                 if item.__class__ == cls:
                     count += 1
             return count
