@@ -80,10 +80,10 @@ class FileStorage:
     def count(self, cls=None):
         """counts the number of objects in the filestorage"""
         count = 0
-        print(cls)
         if cls is not None:
             for item in self.__objects:
-                if item.__class__.__name__ == cls.__name__:
+                print(item)
+                if item.__class__ == cls:
                     count += 1
             return count
         else:
