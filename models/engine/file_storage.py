@@ -75,6 +75,7 @@ class FileStorage:
             key = cls.__name__ + '.' + id
             if key in self.__objects:
                 return self.__objects[key]
+        return None
 
     def count(self, cls=None):
         """counts the number of objects in the filestorage"""
