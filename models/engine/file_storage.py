@@ -81,8 +81,9 @@ class FileStorage:
         """counts the number of objects in the filestorage"""
         count = 0
         if cls is not None:
+            print(type(self.__objects))
+            print(self.__objects)
             for item in self.__objects:
-                print(type(item))
                 if item.__class__ == cls:
                     count += 1
             return count
