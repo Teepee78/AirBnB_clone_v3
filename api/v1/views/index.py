@@ -40,5 +40,5 @@ def stats():
 
     for key, value in classes.items():
         result[key] += storage.count(value)
-    
+
     return jsonify(result)
