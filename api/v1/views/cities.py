@@ -41,7 +41,7 @@ def cities(state_id):
 
 @app_views.route('cities/<uuid:city_id>',
                  methods=['GET', 'DELETE', 'PUT'], strict_slashes=False)
-def city_id(state_id):
+def city_id(city_id):
     """Retrieves a city object by its id"""
     city = storage.get(City, city_id)
     if city is not None:
