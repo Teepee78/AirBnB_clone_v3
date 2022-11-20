@@ -26,7 +26,6 @@ def users():
             abort(400, jsonify({"error": "Missing email"}))
         if "password" not in details:
             abort(400, jsonify({"error": "Missing password"}))
-        name = details["name"]
         user = User(email=details["email"], password=details["password"])
         for k, v in details.items():
             setattr(user, k, v)
