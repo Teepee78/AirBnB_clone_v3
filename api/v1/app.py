@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """This module is the entry point for flask api"""
-from flask import Flask
+from flask import Flask, jsonify
 from models import storage
 from api.v1.views import app_views
 from os import getenv
@@ -14,6 +14,12 @@ app.register_blueprint(app_views, url_prefix="/api/v1")
 def teardown_appcontext(exception):
     """Tear down the app context"""
     storage.close()
+
+
+@app.errorhandler(404)
+def not_found(exception):
+	"""404 not found handler"""
+	return jsonify({"error": "Not found"})
 
 
 if __name__ == "__main__":
