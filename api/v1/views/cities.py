@@ -19,8 +19,8 @@ def cities(state_id):
             cities.append(city.to_dict())
 
     if request.method == 'GET':
-        if cities:
-            return jsonify(result)
+        if len(cities) > 0:
+            return jsonify(cities)
         abort(404, jsonify({"error": "Not found"}))
 
     elif request.method == 'POST':
