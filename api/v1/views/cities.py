@@ -57,7 +57,7 @@ def city_id(city_id):
             if not request.json:
                 abort(400, jsonify({"error": "Not a JSON"}))
             details = request.get_json()
-            forbidden = ["id", "created_at", "updated_at"]
+            forbidden = ["id", "created_at", "updated_at", "state_id"]
             for k, v in details.items():
                 if k not in forbidden:
                     setattr(city, k, v)
