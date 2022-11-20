@@ -15,6 +15,7 @@ def cities(state_id):
     cities = []
 
     for city in all_cities.values():
+        print(city.state_id)
         if city.state_id == state_id:
             cities.append(city.to_dict())
 
