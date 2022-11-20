@@ -27,7 +27,7 @@ def users():
         if "password" not in details:
             abort(400, jsonify({"error": "Missing password"}))
         name = details["name"]
-        user = User(name=name)
+        user = User(email=details["email"], password=details["password"])
         for k, v in details.items():
             setattr(user, k, v)
         user.save()
@@ -50,7 +50,7 @@ def users_id(user_id):
             if not request.json:
                 abort(400, jsonify({"error": "Not a JSON"}))
             details = request.get_json()
-            forbidden = ["id", "created_at", "updated_at"]
+            forbidden = ["id", "email", "created_at", "updated_at"]
             for k, v in details.items():
                 if k not in forbidden:
                     setattr(user, k, v)
