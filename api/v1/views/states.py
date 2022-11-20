@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 """This module defines views for state object"""
 from flask import jsonify
-from views import app_views
+from api.v1.views import app_views
 
 from models import storage
 from models.state import State
