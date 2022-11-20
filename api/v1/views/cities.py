@@ -31,7 +31,7 @@ def cities(state_id):
         details = request.get_json()
         if "name" in details:
             name = details["name"]
-            city = City(name=name)
+            city = City(name=name, state_id=state_id)
             for k, v in details.items():
                 setattr(city, k, v)
             city.save()
