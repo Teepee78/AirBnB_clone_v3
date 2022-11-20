@@ -1,27 +1,53 @@
 #!/usr/bin/python3
 """This module defines views for state object"""
-from flask import jsonify, make_response
+from flask import jsonify, make_response, request
 
 from api.v1.views import app_views
 from models import storage
 from models.state import State
 
 
-@app_views.route('/states', methods=['GET'])
+@app_views.route('/states', methods=['GET', 'POST'])
 def states():
 	"""Retrieves the list of all State objects"""
-	states = storage.all(State)
-	result = []
-	
-	for state in states.values():
-		result.append(state.to_dict())
-	return jsonify(result)
+	if request.method == 'GET':
+		states = storage.all(State)
+		result = []
+		
+		for state in states.values():
+			result.append(state.to_dict())
+		return jsonify(result)
+	elif request.method == 'POST':
+		if not request.json:
+			return make_response(jsonify({"error": "Not a JSON"}, 400))
+		details = request.get_json()
+		if "name" in details:
+			name = details["name"]
+			state = State(name=name)
+			for k, v in details.items():
+				setattr(state, k, v)
+			state.save()
+			return make_response(jsonify(state.to_dict()), 201)
+		return make_response(jsonify({"error": "Missing name"}), 400)
 
 
-@app_views.route('states/<uuid:state_id>', methods=['GET'])
+@app_views.route('states/<uuid:state_id>', methods=['GET', 'DELETE', 'PUT'])
 def states_id(state_id):
 	"""Retrieves a State object by its id"""
 	state = storage.get(State, state_id)
 	if state is not None:
-		return jsonify(state.to_dict())
+		if request.method == 'GET':
+			return jsonify(state.to_dict())
+		if request.method == 'DELETE':
+			state.delete()
+			return jsonify({})
+		if request.method == 'PUT':
+			if not request.json:
+				return make_response(jsonify({"error": "Not a JSON"}, 400))
+			details = request.get_json()
+			forbidden = ["id", "created_at", "updated_at"]
+			for k, v in details:
+				if k not in forbidden:
+					setattr(state, k, v)
+			return jsonify(state.to_dict())
 	return make_response(jsonify({"error": "Not found"}, 404))
