@@ -22,14 +22,16 @@ def users():
         if not request.json:
             abort(400, jsonify({"error": "Not a JSON"}))
         details = request.get_json()
-        if "name" in details:
-            name = details["name"]
-            user = User(name=name)
-            for k, v in details.items():
-                setattr(user, k, v)
-            user.save()
-            return make_response(jsonify(user.to_dict()), 201)
-        abort(400, jsonify({"error": "Missing name"}))
+        if "email" not in details:
+            abort(400, jsonify({"error": "Missing email"}))
+        if "password" not in details:
+            abort(400, jsonify({"error": "Missing password"}))
+        name = details["name"]
+        user = User(name=name)
+        for k, v in details.items():
+            setattr(user, k, v)
+        user.save()
+        return make_response(jsonify(user.to_dict()), 201)
 
 
 @app_views.route('users/<uuid:user_id>',
