@@ -7,7 +7,7 @@ from models import storage
 from models.city import City
 
 
-@app_views.route('/states/<uuid:state_id>/cities',
+@app_views.route('/states/<state_id>/cities',
                  methods=['GET', 'POST'], strict_slashes=False)
 def cities(state_id):
     """Retrieves the list of all city objects"""
@@ -16,7 +16,6 @@ def cities(state_id):
 
     for city in all_cities.values():
         if city.state_id == state_id:
-            print("yes")
             cities.append(city.to_dict())
 
     if request.method == 'GET':
