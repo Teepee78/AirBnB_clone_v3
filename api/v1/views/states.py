@@ -22,8 +22,10 @@ def states():
 def states_id(state_id):
 	"""Retrieves a State object by its id"""
 	states = storage.all(State)
+	result = []
 	for state in states.values():
-		print(state.id)
+		result.append(state.id)
 		if state.id == state_id:
 			return jsonify(state.to_dict())
+	return jsonify(result)
 	return make_response(jsonify({"error": "Not found"}, 404))
