@@ -13,7 +13,7 @@ def states():
 	states = storage.all(State)
 	result = []
 	
-	for state in states:
+	for state in states.values():
 		result.append(state.to_dict())
 	return jsonify(result)
 
