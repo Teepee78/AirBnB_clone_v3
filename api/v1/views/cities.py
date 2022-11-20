@@ -15,8 +15,8 @@ def cities(state_id):
     cities = []
 
     for city in all_cities.values():
-        print(city.state_id)
         if city.state_id == state_id:
+            print("yes")
             cities.append(city.to_dict())
 
     if request.method == 'GET':
