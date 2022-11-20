@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """This module defines views for state object"""
-from flask import jsonify, make_response, request
+from flask import jsonify, make_response, request, abort
 
 from api.v1.views import app_views
 from models import storage
@@ -19,7 +19,7 @@ def states():
 		return jsonify(result)
 	elif request.method == 'POST':
 		if not request.json:
-			return make_response(jsonify({"error": "Not a JSON"}, 400))
+			abort(400, jsonify({"error": "Not a JSON"}))
 		details = request.get_json()
 		if "name" in details:
 			name = details["name"]
@@ -28,7 +28,7 @@ def states():
 				setattr(state, k, v)
 			state.save()
 			return make_response(jsonify(state.to_dict()), 201)
-		return make_response(jsonify({"error": "Missing name"}), 400)
+		abort(400, jsonify({"error": "Missing name"}))
 
 
 @app_views.route('states/<uuid:state_id>', methods=['GET', 'DELETE', 'PUT'])
@@ -43,11 +43,11 @@ def states_id(state_id):
 			return jsonify({})
 		if request.method == 'PUT':
 			if not request.json:
-				return make_response(jsonify({"error": "Not a JSON"}, 400))
+				abort(400, jsonify({"error": "Not a JSON"}))
 			details = request.get_json()
 			forbidden = ["id", "created_at", "updated_at"]
 			for k, v in details:
 				if k not in forbidden:
 					setattr(state, k, v)
 			return jsonify(state.to_dict())
-	return make_response(jsonify({"error": "Not found"}, 404))
+	abort(404, jsonify({"error": "Not found"}))
