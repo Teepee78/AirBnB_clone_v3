@@ -41,8 +41,8 @@ def states_id(state_id):
 		if request.method == 'GET':
 			return jsonify(state.to_dict())
 		if request.method == 'DELETE':
-			state.delete()
-			return jsonify({})
+			storage.delete(state)
+			return make_response(jsonify({}), 200)
 		if request.method == 'PUT':
 			if not request.json:
 				abort(400, jsonify({"error": "Not a JSON"}))
