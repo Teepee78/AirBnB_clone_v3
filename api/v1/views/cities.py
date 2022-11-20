@@ -7,7 +7,7 @@ from models import storage
 from models.city import City
 
 
-@app_views.route('/states/<uuid:state_id>/cities',
+@app_views.route('/states/<state_id>/cities',
                  methods=['GET', 'POST'], strict_slashes=False)
 def cities(state_id):
     """Retrieves the list of all city objects"""
@@ -40,7 +40,7 @@ def cities(state_id):
         abort(400, jsonify({"error": "Missing name"}))
 
 
-@app_views.route('cities/<uuid:city_id>',
+@app_views.route('cities/<city_id>',
                  methods=['GET', 'DELETE', 'PUT'], strict_slashes=False)
 def city_id(city_id):
     """Retrieves a city object by its id"""
