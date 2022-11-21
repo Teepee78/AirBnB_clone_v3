@@ -18,6 +18,7 @@ def cities(state_id):
         abort(404, jsonify({"error": "Not found"}))
     return jsonify([city.to_dict() for city in state.cities])
 
+
 @app_views.route('/states/<state_id>/cities',
                  methods=['POST'], strict_slashes=False)
 def cities_post(state_id):
