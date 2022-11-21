@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 """This module defines views for Review object"""
 from flask import abort, jsonify, make_response, request
+
 from api.v1.views import app_views
 from models import storage
 from models.review import Review
@@ -45,6 +46,7 @@ def review(place_id):
 @app_views.route('/reviews/<review_id>', methods=['GET', 'DELETE', 'PUT'],
                  strict_slashes=False)
 def handle_review(review_id):
+    """Handles basic method of the reviews endpoint"""
     review = storage.get("Review", review_id)
     if not review:
         abort(404)
