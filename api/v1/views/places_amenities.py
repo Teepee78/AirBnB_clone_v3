@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """ View for place and Amentity objects """
-from app.v1.views import app_views
+from api.v1.views import app_views
 from flask import jsonify, make_response, request
 from models import storage
 from models.place import Place
