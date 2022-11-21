@@ -6,51 +6,37 @@ from api.v1.views import app_views
 from models import storage
 from models.place import Place
 from models.user import User
+import models.city import City
 
 
 @app_views.route('/cities/<city_id>/places',
                  methods=['GET', 'POST'], strict_slashes=False)
 def places(city_id):
     """Retrieves the list of all place objects"""
-    all_places = storage.all(Place)
-    places = []
-
-    for place in all_places.values():
-        if place.city_id == city_id:
-            places.append(place.to_dict())
-    if len(places) == 0:
+    city = storage.get(City, city_id)
+    if not city:
         abort(404, jsonify({"error": "Not found"}))
 
     if request.method == 'GET':
-        if len(places) > 0:
-            return jsonify(places)
-        abort(404, jsonify({"error": "Not found"}))
+            return jsonify([place.to_dict() for place in city.places])
 
     elif request.method == 'POST':
-        if not places:
-            abort(404, jsonify({"error": "Not found"}))
         if not request.json:
             abort(400, jsonify({"error": "Not a JSON"}))
         details = request.get_json()
-        if "user_id" in details:
-            user_id = details["user_id"]
-            users = storage.all(User)
-            user = 0
-            for use in users:
-                if use.id == user_id:
-                    user = 1
-                    break
-            if user == 0:
-                abort(404, jsonify({"error": "Not found"}))
-            if "name" not in details:
-                abort(400, jsonify({"error": "Missing name"}))
-            place = Place(name=details["name"],
-                          city_id=city_id, user_id=user_id)
-            for k, v in details.items():
-                setattr(place, k, v)
-            place.save()
-            return make_response(jsonify(place.to_dict()), 201)
-        abort(400, jsonify({"error": "Missing user_id"}))
+        if "user_id" not in details:
+            abort(400, jsonify({"error": "Missing user_id"}))
+        user_id = details["user_id"]
+        user = storage.get(User, user_id)
+        if "name" not in details:
+            abort(400, jsonify({"error": "Missing name"}))
+        place = Place(name=details["name"],
+                        city_id=city_id, user_id=user_id)
+        for k, v in details.items():
+            setattr(place, k, v)
+        storage.new(place)
+        storage.save()
+        return make_response(jsonify(place.to_dict()), 201)
 
 
 @app_views.route('places/<place_id>',
@@ -77,6 +63,6 @@ def place_id(place_id):
             for k, v in details.items():
                 if k not in forbidden:
                     setattr(place, k, v)
-            place.save()
+            storage.save()
             return make_response(jsonify(place.to_dict()), 200)
     abort(404, jsonify({"error": "Not found"}))

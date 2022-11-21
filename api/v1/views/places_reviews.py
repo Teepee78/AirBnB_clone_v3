@@ -9,7 +9,7 @@ from models.place import Place
 
 
 @app_views.route('/places/<place_id>/reviews',
-                 methods=['GET', 'POST'], strict_slashes=False)
+                 methods=['GET'], strict_slashes=False)
 def review(place_id):
     """Retrieves the list of all reviews for a place objects"""
     place = storage.get(Place, place_id)
@@ -18,29 +18,36 @@ def review(place_id):
 
     # if request method is equal to GET, return review
     if request.method == 'GET':
-        reviews = [review.to_dict() for review in place.reviews]
-        return reviews
+        return jsonify([review.to_dict() for review in place.reviews])
 
-    # if request method is post, create review
-    if request.method == 'POST':
-        if not request.json:
-            abort(400, jsonify({"error": "Not a JSON"}))
-        details = request.get_json()
 
-        if "user_id" not in details:
-            abort(400, jsonify({"error": "Missing user_id"}))
+@app_views.route('/places/<place_id>/reviews',
+                 methods=['POST'], strict_slashes=False)
+def review_post(place_id):
+    """creates a new review object """
+    place = storage.get(Place, place_id)
+    if not place:
+        abort(404, jsonify({"error": "Not found"}))
+    if not request.json:
+        abort(400, jsonify({"error": "Not a JSON"}))
+    details = request.get_json()
 
-        user_id = details["user_id"]
-        user = storage.get("User", user_id)
-        if not user:
-            abort(400, jsonify({"error": "Not found"}))
-        text = details["text"]
-        if not text:
-            abort(400, jsonify({"error": "Missing text"}))
-        review = Review(text=text,
-                        place_id=place_id, user_id=user_id)
-        review.save()
-        return make_response(jsonify(review.to_dict()), 200)
+    if "user_id" not in details:
+        abort(400, jsonify({"error": "Missing user_id"}))
+
+    user_id = details["user_id"]
+    user = storage.get("User", user_id)
+    if not user:
+        abort(400, jsonify({"error": "Not found"}))
+    text = details["text"]
+    if not text:
+        abort(400, jsonify({"error": "Missing text"}))
+    review = Review(text=text,
+                    place_id=place_id, user_id=user_id)
+    storage.new(review)
+    storage.save()
+    return make_response(jsonify(review.to_dict()), 200)
+
 
 
 @app_views.route('/reviews/<review_id>', methods=['GET', 'DELETE', 'PUT'],
@@ -49,9 +56,9 @@ def handle_review(review_id):
     """Handles basic method of the reviews endpoint"""
     review = storage.get(Review, review_id)
     if not review:
-        abort(404)
+        abort(404, jsonify({"error": "Not found"}))
     if request.method == 'GET':
-        return review.to_dict()
+        return jsonify(review.to_dict())
 
     # if request method is Delete, delete review
     if request.method == 'DELETE':
