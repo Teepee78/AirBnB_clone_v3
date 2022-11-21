@@ -9,36 +9,34 @@ from models.state import State
 
 
 @app_views.route('/states/<state_id>/cities',
-                 methods=['GET', 'POST'], strict_slashes=False)
+                 methods=['GET'], strict_slashes=False)
 def cities(state_id):
     """Retrieves the list of all city objects"""
-    all_cities = storage.all(City)
-    cities = []
     state = storage.get(State, state_id)
 
-    for city in all_cities.values():
-        if city.state_id == state_id:
-            cities.append(city.to_dict())
-
-    if request.method == 'GET':
-        if len(cities) > 0:
-            return jsonify(cities)
+    if not state:
         abort(404, jsonify({"error": "Not found"}))
+    return jsonify([city.to_dict() for city in state.cities])
 
-    elif request.method == 'POST':
-        if not state:
-            abort(404, jsonify({"error": "Not found"}))
-        if not request.json:
-            abort(400, jsonify({"error": "Not a JSON"}))
-        details = request.get_json()
-        if "name" in details:
-            name = details["name"]
-            city = City(name=name, state_id=state_id)
-            for k, v in details.items():
-                setattr(city, k, v)
-            city.save()
-            return make_response(jsonify(city.to_dict()), 201)
+@app_views.route('/states/<state_id>/cities',
+                 methods=['POST'], strict_slashes=False)
+def cities_post(state_id):
+    """Create a new city"""
+    state = storage.get(State, state_id)
+    if not state:
+        abort(404, jsonify({"error": "Not found"}))
+    if not request.json:
+        abort(400, jsonify({"error": "Not a JSON"}))
+    details = request.get_json()
+    if "name" not in details:
         abort(400, jsonify({"error": "Missing name"}))
+    name = details["name"]
+    city = City(name=name, state_id=state_id)
+    for k, v in details.items():
+        setattr(city, k, v)
+    storage.new(city)
+    storage.save()
+    return make_response(jsonify(city.to_dict()), 201)
 
 
 @app_views.route('cities/<city_id>',
