@@ -30,9 +30,9 @@ def places(city_id):
         user = storage.get(User, user_id)
         if "name" not in details:
             abort(400, jsonify({"error": "Missing name"}))
-        place = Place(name=details["name"], city_id=city_id, user_id=user_id)
-        for k, v in details.items():
-            setattr(place, k, v)
+        place = Place(name=details["name"])
+        setattr(place, 'city_id', city_id)
+        setattr(place, 'user_id', user_id)
         storage.new(place)
         storage.save()
         return make_response(jsonify(place.to_dict()), 201)
