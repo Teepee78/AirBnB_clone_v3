@@ -12,7 +12,7 @@ from models.place import Place
                  methods=['GET', 'POST'], strict_slashes=False)
 def review(place_id):
     """Retrieves the list of all reviews for a place objects"""
-    place = storage.get("Place", place_id)
+    place = storage.get(Place, place_id)
     if not place:
         abort(404, jsonify({"error": "Not found"}))
 
@@ -47,7 +47,7 @@ def review(place_id):
                  strict_slashes=False)
 def handle_review(review_id):
     """Handles basic method of the reviews endpoint"""
-    review = storage.get("Review", review_id)
+    review = storage.get(Review, review_id)
     if not review:
         abort(404)
     if request.method == 'GET':
