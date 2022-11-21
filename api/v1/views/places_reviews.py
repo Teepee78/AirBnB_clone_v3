@@ -1,7 +1,6 @@
 #!/usr/bin/python3
 """This module defines views for Review object"""
 from flask import abort, jsonify, make_response, request
-
 from api.v1.views import app_views
 from models import storage
 from models.review import Review
