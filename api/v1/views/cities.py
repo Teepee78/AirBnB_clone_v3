@@ -5,7 +5,7 @@ from flask import abort, jsonify, make_response, request
 from api.v1.views import app_views
 from models import storage
 from models.city import City
-
+from models.state import State
 
 @app_views.route('/states/<state_id>/cities',
                  methods=['GET', 'POST'], strict_slashes=False)
@@ -13,6 +13,7 @@ def cities(state_id):
     """Retrieves the list of all city objects"""
     all_cities = storage.all(City)
     cities = []
+    state = storage.get(State, state_id)
 
     for city in all_cities.values():
         if city.state_id == state_id:
@@ -24,7 +25,7 @@ def cities(state_id):
         abort(404, jsonify({"error": "Not found"}))
 
     elif request.method == 'POST':
-        if not cities:
+        if not state:
             abort(404, jsonify({"error": "Not found"}))
         if not request.json:
             abort(400, jsonify({"error": "Not a JSON"}))
