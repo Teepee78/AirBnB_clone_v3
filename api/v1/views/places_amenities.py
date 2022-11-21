@@ -14,7 +14,7 @@ def places_amenities(place_id):
     """Retrieves list of Amenities in a place"""
     place = storage.get(Place, place_id)
     if not place:
-        abort(404, jsonify({"error": "Not found"}))
+        abort(404)
 
     if getenv('HBNB_TYPE_STORAGE') == 'db':
         a_list = [amenity.to_dict() for amentity in place.amenities]
@@ -30,15 +30,15 @@ def del_places_amenities(place_id, amenity_id):
     """ Deletes an Amenity object """
     place = storage.get("Place", place_id)
     if not place:
-        abort(404, jsonify({"error": "Not found"}))
+        abort(404)
 
     amenity = storage.get("Amenity", amenity_id)
     if not amenity:
-        abort(404, jsonify({"error": "Not found"}))
+        abort(404)
 
     if getenv('HBNB_TYPE_STORAGE') == 'db':
         if amenity not in place.amenities:
-            abort(404, jsonify({"error": "Not found"}))
+            abort(404)
     else:
         if amenity_id not in place.amenity_ids:
             abort(404, jsonify({"error": "Not found"}))
@@ -57,11 +57,11 @@ def link_amenity_place(place_id, amenity_id):
     """ Links an Amenity and a Place """
     place = storage.get("Place", place_id)
     if not place:
-        abort(404, jsonify({"error": "Not found"}))
+        abort(404)
 
     amenity = storage.get("Amenity", amenity_id)
     if not amenity:
-        abort(404, jsonify({"error": "Not found"}))
+        abort(404)
     if getenv('HBNB_TYPE_STORAGE') == 'db':
         if amenity in place.amenities:
             return make_response(jsonify(amenity.to_dict()), 200)
