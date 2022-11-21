@@ -18,7 +18,7 @@ def places(city_id):
         abort(404, jsonify({"error": "Not found"}))
 
     if request.method == 'GET':
-            return jsonify([place.to_dict() for place in city.places])
+        return jsonify([place.to_dict() for place in city.places])
 
     elif request.method == 'POST':
         if not request.json:
@@ -30,8 +30,7 @@ def places(city_id):
         user = storage.get(User, user_id)
         if "name" not in details:
             abort(400, jsonify({"error": "Missing name"}))
-        place = Place(name=details["name"],
-                        city_id=city_id, user_id=user_id)
+        place = Place(name=details["name"], city_id=city_id, user_id=user_id)
         for k, v in details.items():
             setattr(place, k, v)
         storage.new(place)
