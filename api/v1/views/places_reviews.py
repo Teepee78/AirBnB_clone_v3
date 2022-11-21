@@ -42,9 +42,9 @@ def review(place_id):
         return make_response(jsonify(review.to_dict()), 200)
 
 
-@app_views.route('/reviews/<review_id>', methods=['GET', 'DELETE'],
+@app_views.route('/reviews/<review_id>', methods=['GET', 'DELETE', 'PUT'],
                  strict_slashes=False)
-def get_review(review_id):
+def handle_review(review_id):
     review = storage.get("Review", review_id)
     if not review:
         abort(404)
