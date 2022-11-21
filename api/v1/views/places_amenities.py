@@ -7,19 +7,21 @@ from models.place import Place
 from models.amenity import amenity
 from os import getenv
 
+
 @app_views.route('/places/<place_id>/amenities', methods=['GET'],
-    strict_slashes=False)
+                 strict_slashes=False)
 def places_amenities(place_id):
-	"""Retrieves list of Amenities in a place"""
-	place = storage.get(Place, place_id)
-	if not place:
-		abort (404, jsonify({"error": "Not found"}))
-	
-	if getenv('HBNB_TYPE_STORAGE') == 'db':
-		a_list = [amenity.to_dict() for amentity in place.amenities]
-	else
-		a_list = [storage.get(Amentity, a_id).to_dict() for a_id in place.amenities]
-	return jsonify(a_list)
+    """Retrieves list of Amenities in a place"""
+    place = storage.get(Place, place_id)
+    if not place:
+        abort(404, jsonify({"error": "Not found"}))
+
+    if getenv('HBNB_TYPE_STORAGE') == 'db':
+        a_list = [amenity.to_dict() for amentity in place.amenities]
+    else:
+        a_list = [storage.get(Amentity, a_id).to_dict()
+                  for a_id in place.amenities]
+    return jsonify(a_list)
 
 
 @app_views.route('/places/<place_id>/amenities/<amenity_id>',
