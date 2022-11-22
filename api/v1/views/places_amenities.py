@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 """ View for place and Amentity objects """
 from api.v1.views import app_views
-from flask import jsonify, make_response, request
+from flask import jsonify, make_response, request, abort
 from models import storage
 from models.place import Place
 from models.amenity import Amenity
@@ -18,6 +18,7 @@ def places_amenities(place_id):
 
     if getenv('HBNB_TYPE_STORAGE') == 'db':
         a_list = [amenity.to_dict() for amentity in place.amenities]
+        return a_list
     else:
         return jsonify([storage.get(Amentity, a_id).to_dict()
                         for a_id in place.amenities])
@@ -61,14 +62,15 @@ def link_amenity_place(place_id, amenity_id):
     amenity = storage.get(Amenity, amenity_id)
     if not amenity:
         abort(404)
+
+    place_amenities = place.amenities
+    place_amenity = list(filter(lambda a: a.id == amenity_id, place_amenities))
+    if place_amenity:  # amenity already exists for this place
+        return jsonify(amenity.to_dict())
     if getenv('HBNB_TYPE_STORAGE') == 'db':
         if amenity in place.amenities:
-            return make_response(jsonify(amenity.to_dict()), 200)
-        place.amenities.append(amenity)
+            place.amenities.append(amenity)
     else:
-        if amenity_id in place.amenity_ids:
-            return make_response(jsonify(amenity.to_dict()), 200)
-        place.amenity_ids.append(amenity_id)
-
-    storage.save()
+        iplace.amenity_ids.append(amenity_id)
+    place.save()
     return make_response(jsonify(amenity.to_dict()), 201)
