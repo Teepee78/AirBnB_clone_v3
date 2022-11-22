@@ -82,6 +82,7 @@ class DBStorage:
                 cls.id == id
             ).first()
             return objs
+
             # for obj in objs:
             # if obj.id == id:
             # return (obj)
@@ -90,6 +91,7 @@ class DBStorage:
 
     def count(self, cls=None):
         """Returns the number of objects in storage with specified class if class is supplied"""
+
         count = 0
         if cls:
             count += len(self.__session.query(cls).all())
