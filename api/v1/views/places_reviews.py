@@ -68,23 +68,7 @@ def handle_review(review_id):
 @app_views.route('/reviews/<review_id>', methods=['PUT'],
                  strict_slashes=False)
 def update_review(review_id):
-    # """Handles update method of the reviews endpoint"""
-
-    # review = storage.get(Review, review_id)
-    # if not review:
-    #     abort(404, jsonify({"error": "Not found"}))
-
-    # details = request.get_json()
-    # print(details)
-    # if not details:
-    #     abort(404, jsonify({"error": "Not a JSON"}))
-    # for k, v in details.items():
-    #     if k not in ['id', 'user_id', 'place_id',
-    #                  'created_at', 'updated_at']:
-    #         setattr(review, k, v)
-    # storage.save()
-    # return make_response(jsonify(review.to_dict()), 200)
-    """Update existing review identified by review_id"""
+    """Handles update method of the reviews endpoint"""
     review = storage.get(Review, review_id)
     if not review:
         abort(404)

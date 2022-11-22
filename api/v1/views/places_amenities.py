@@ -19,20 +19,19 @@ def places_amenities(place_id):
     if getenv('HBNB_TYPE_STORAGE') == 'db':
         a_list = [amenity.to_dict() for amentity in place.amenities]
     else:
-        a_list = [storage.get(Amentity, a_id).to_dict()
-                  for a_id in place.amenities]
-    return jsonify(a_list)
+        return jsonify([storage.get(Amentity, a_id).to_dict()
+                        for a_id in place.amenities])
 
 
 @app_views.route('/places/<place_id>/amenities/<amenity_id>',
                  methods=['DELETE'], strict_slashes=False)
 def del_places_amenities(place_id, amenity_id):
     """ Deletes an Amenity object """
-    place = storage.get("Place", place_id)
+    place = storage.get(Place, place_id)
     if not place:
         abort(404)
 
-    amenity = storage.get("Amenity", amenity_id)
+    amenity = storage.get(Amenity, amenity_id)
     if not amenity:
         abort(404)
 
@@ -55,11 +54,11 @@ def del_places_amenities(place_id, amenity_id):
                  strict_slashes=False)
 def link_amenity_place(place_id, amenity_id):
     """ Links an Amenity and a Place """
-    place = storage.get("Place", place_id)
+    place = storage.get(Place, place_id)
     if not place:
         abort(404)
 
-    amenity = storage.get("Amenity", amenity_id)
+    amenity = storage.get(Amenity, amenity_id)
     if not amenity:
         abort(404)
     if getenv('HBNB_TYPE_STORAGE') == 'db':
