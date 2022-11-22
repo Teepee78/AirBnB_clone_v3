@@ -100,7 +100,7 @@ def places_search():
     places = []
 
     if body_r.get('states'):
-        states = [storage.get(State, id) for id in body_r.get('states')]
+        states = [storage.get(State, id) for id in body_r['states']]
 
         for state in states:
             for city in state.cities:
