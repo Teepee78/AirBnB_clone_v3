@@ -36,17 +36,16 @@ def del_places_amenities(place_id, amenity_id):
     if not amenity:
         abort(404)
 
+    place_amenities = place.amenities
+    place_amenity = list(filter(lambda a: a.id == amenity_id, place_amenities))
+    if not place_amenity:
+        abort(404)
     if getenv('HBNB_TYPE_STORAGE') == 'db':
-        if amenity not in place.amenities:
-            abort(404)
+        ace.amenities.remove(place_amenity[0])
     else:
-        if amenity_id not in place.amenity_ids:
-            abort(404, jsonify({"error": "Not found"}))
-        index = place.amenity_ids.index(amenity_id)
-        place.amenity_ids.pop(index)
-
-    amenity.delete()
-    storage.save()
+        place.amenity_ids.remove(place_amenity[0].id)
+    place.save()
+    
     return make_response(jsonify({}), 200)
 
 
