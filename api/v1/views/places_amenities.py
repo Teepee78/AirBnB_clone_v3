@@ -12,7 +12,7 @@ from os import getenv
                  strict_slashes=False)
 def places_amenities(place_id):
     """Retrieves list of Amenities in a place"""
-    place = storage.get("Place", place_id)
+    place = storage.get(Place, place_id)
     if not place:
         abort(404)
     return jsonify([a.to_dict() for a in place.amenities])
