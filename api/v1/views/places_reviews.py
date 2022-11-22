@@ -46,13 +46,13 @@ def review_post(place_id):
     return make_response(jsonify(review.to_dict()), 201)
 
 
-@app_views.route('/reviews/<review_id>', methods=['GET', 'DELETE', 'PUT'],
+@app_views.route('/reviews/<review_id>', methods=['GET', 'DELETE'],
                  strict_slashes=False)
 def handle_review(review_id):
     """Handles basic method of the reviews endpoint"""
     review = storage.get(Review, review_id)
     if not review:
-        abort(404, jsonify({"error": "Not found"}))
+        return abort(404, jsonify({"error": "Not found"}))
 
     # if request method is GET
     if request.method == 'GET':
@@ -64,14 +64,42 @@ def handle_review(review_id):
         storage.save()
         return make_response(jsonify({}), 200)
 
-    # if request method == PUT, update review
-    if request.method == 'PUT':
-        if not request.json():
-            abort(400, jsonify({"error": "Not a JSON"}))
-        details = request.get_json()
-        for k, v in details.items():
-            if k not in ['id', 'user_id', 'place_id',
-                         'created_at', 'updated_at']:
-                setattr(review, k, v)
-        storage.save()
-        return make_response(jsonify(review.to_dict()), 200)
+
+@app_views.route('/reviews/<review_id>', methods=['PUT'],
+                 strict_slashes=False)
+def update_review(review_id):
+    # """Handles update method of the reviews endpoint"""
+
+    # review = storage.get(Review, review_id)
+    # if not review:
+    #     abort(404, jsonify({"error": "Not found"}))
+
+    # details = request.get_json()
+    # print(details)
+    # if not details:
+    #     abort(404, jsonify({"error": "Not a JSON"}))
+    # for k, v in details.items():
+    #     if k not in ['id', 'user_id', 'place_id',
+    #                  'created_at', 'updated_at']:
+    #         setattr(review, k, v)
+    # storage.save()
+    # return make_response(jsonify(review.to_dict()), 200)
+    """Update existing review identified by review_id"""
+    review = storage.get(Review, review_id)
+    if not review:
+        abort(404)
+
+    updates = request.get_json(silent=True)
+    if not updates:
+        return jsonify(error="Not a JSON"), 400
+
+    updates.pop("id", None)
+    updates.pop("user_id", None)
+    updates.pop("place_id", None)
+    updates.pop("created_at", None)
+    updates.pop("updated_at", None)
+
+    for k, v in updates.items():
+        setattr(review, k, v)
+    review.save()
+    return jsonify(review.to_dict()), 200
