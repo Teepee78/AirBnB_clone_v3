@@ -12,7 +12,7 @@ from models.amenity import Amenity
 
 
 @app_views.route('/cities/<city_id>/places',
-                 methods=['GET', 'POST'], strict_slashes=False)
+                 methods=['GET'], strict_slashes=False)
 def places(city_id):
     """Retrieves the list of all place objects"""
     city = storage.get(City, city_id)
@@ -22,22 +22,31 @@ def places(city_id):
     if request.method == 'GET':
         return jsonify([place.to_dict() for place in city.places])
 
-    elif request.method == 'POST':
-        if not request.json:
-            abort(400, jsonify({"error": "Not a JSON"}))
-        details = request.get_json()
-        if "user_id" not in details:
-            abort(400, jsonify({"error": "Missing user_id"}))
-        user_id = details["user_id"]
-        user = storage.get(User, user_id)
-        if "name" not in details:
-            abort(400, jsonify({"error": "Missing name"}))
-        place = Place(name=details["name"])
-        setattr(place, 'city_id', city_id)
-        setattr(place, 'user_id', user_id)
-        storage.new(place)
-        storage.save()
-        return make_response(jsonify(place.to_dict()), 201)
+
+@app_views.route('/cities/<city_id>/places',
+                 methods=['POST'], strict_slashes=False)
+def places_post(city_id):
+    """creates a new place object"""
+    city = storage.get(City, city_id)
+    if not city:
+        abort(404, jsonify({"error": "Not found"}))
+    if not request.json:
+        abort(400, jsonify({"error": "Not a JSON"}))
+    new_place = request.get_json()
+    if not new_place:
+        abort(400, jsonify({"error": "Not a JSON"}))
+    if "user_id" not in new_place:
+        abort(400, jsonify({"error": "Missing user_id"}))
+    user_id = new_place['user_id']
+    if not storage.get(User, user_id):
+        abort(404)
+    if "name" not in new_place:
+        abort(400, jsonify({"error": "Missing name"}))
+    place = Place(**new_place)
+    setattr(place, 'city_id', city_id)
+    storage.new(place)
+    storage.save()
+    return make_response(jsonify(place.to_dict()), 201)
 
 
 @app_views.route('places/<place_id>',

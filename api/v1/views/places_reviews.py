@@ -6,6 +6,7 @@ from api.v1.views import app_views
 from models import storage
 from models.review import Review
 from models.place import Place
+from models.user import User
 
 
 @app_views.route('/places/<place_id>/reviews',
@@ -34,11 +35,12 @@ def review_post(place_id):
         abort(400, jsonify({"error": "Missing user_id"}))
 
     user_id = details["user_id"]
-    if not storage.get("User", user_id):
+    if not storage.get(User, user_id):
         abort(404, jsonify({"error": "Not found"}))
     if "text" not in details:
         abort(400, jsonify({"error": "Missing text"}))
     review = Review(**details)
+    setattr(review, 'place_id', place_id)
     storage.new(review)
     storage.save()
     return make_response(jsonify(review.to_dict()), 201)
