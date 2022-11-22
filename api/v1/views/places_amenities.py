@@ -61,9 +61,8 @@ def link_amenity_place(place_id, amenity_id):
     if place_amenity:  # amenity already exists for this place
         return jsonify(amenity.to_dict())
     if getenv('HBNB_TYPE_STORAGE') == 'db':
-        if amenity in place.amenities:
-            place.amenities.append(amenity)
+        place.amenities.append(amenity)
     else:
-        iplace.amenity_ids.append(amenity_id)
+        place.amenity_ids.append(amenity_id)
     place.save()
     return make_response(jsonify(amenity.to_dict()), 201)
